@@ -4,23 +4,23 @@
 
 //------------------------------------------------------------------------------
 ItemStack::ItemStack()
-    :item(0, "Air")
+	:item(0, "Air")
 {
-    this->quantity = 0;
+	this->quantity = 0;
 }
 
 //------------------------------------------------------------------------------
 ItemStack::ItemStack(const Item &item, int s)
-    :item(item)
+	:item(item)
 {
-    this->quantity = s;
+	this->quantity = s;
 }
 
 //------------------------------------------------------------------------------
 std::ostream& operator<<(std::ostream &outs, const ItemStack &prt)
 {
-    outs << std::right << "(" << std::setw(2) << prt.size() << ") "
-         << (prt.getItem()).getName();
+	outs << std::right << "(" << std::setw(2) << prt.size() << ") "
+		 << (prt.getItem()).getName();
 
-    return outs;
+	return outs;
 }
