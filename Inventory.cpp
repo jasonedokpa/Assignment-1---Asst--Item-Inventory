@@ -44,6 +44,21 @@ Inventory::Inventory(const Inventory &src)
 {
 	// @todo implement this function
 
+    //initialize every private data member (attribute)
+	this->head     = nullptr;
+	this->tail     = nullptr;
+	this->occupied = 0;
+	this->slots = src.slots;
+
+	// Start the Copy Operations
+	Node* srcIt = src.head;
+
+	while (srcIt != nullptr)
+	{
+        this->addItemStackNoCheck(srcIt->data);
+
+        srcIt = srcIt->next;
+    }
 
 }
 
@@ -51,6 +66,38 @@ Inventory::Inventory(const Inventory &src)
 Inventory::~Inventory()
 {
 	// @todo implement this function
+
+	Node *this_iterator = nullptr;  // Loop control pointer
+    Node *to_delete     = nullptr;  // Node to delete
+
+    // start at the beginning of the this
+    this_iterator = this->head;
+
+    // iterate through the this and delete each node
+    while (this_iterator != nullptr) {
+        to_delete = this_iterator;
+
+        // move to next node
+        this_iterator = this_iterator->next;
+
+        // delete the current node
+        delete to_delete;
+
+        to_delete = nullptr;  // dangling pointers are bad
+
+        // Such output would not be included in
+        // a non-academic exercise
+        //std::cerr << "Deleting Node" << "\n";
+    }
+
+    // Such output would not be included in
+    // a non-academic exercise
+    //std::cerr << "Deleted List" << "\n";
+
+    // Are these three lines necessary?
+    head  = nullptr;
+    tail  = nullptr;
+    occupied = 0;
 
 }
 
@@ -63,8 +110,8 @@ bool Inventory::isFull() const
 	// in the form "return (boolean expression);"
 	// you are overthinking the problem
 
-	return true; // This line is a placeholder. Remove it.
-
+	//return true; // This line is a placeholder. Remove it.
+	return (occupied == slots);
 }
 
 //------------------------------------------------------------------------------
@@ -73,7 +120,8 @@ void Inventory::display(std::ostream &outs) const
 	outs << " -Used " << occupied << " of " << slots << " slots" << "\n";
 
 	Node* it = head;
-	while(it != nullptr){
+	while(it != nullptr)
+	{
 		outs << "  " << it->data << "\n";
 
 		it = it->next;
@@ -103,6 +151,20 @@ Inventory::Node* Inventory::findMatchingItemStackNode(const ItemStack& itemStack
 {
 	// @todo implement this function
 
+
+	Node* it = head;
+
+    while(it != nullptr)
+	{
+        // If it and itemStack contain the same type of Item
+        if(it->data==itemStack) 
+		{
+            return it;
+        }
+
+        it = it->next;
+    }
+
 	return nullptr;
 }
 
@@ -110,6 +172,7 @@ Inventory::Node* Inventory::findMatchingItemStackNode(const ItemStack& itemStack
 void Inventory::mergeStacks(ItemStack& lhs, const ItemStack& rhs)
 {
 	// Update lhs... remember rhs is read only
+	lhs.addItems(rhs.size());
 }
 
 //------------------------------------------------------------------------------
@@ -117,4 +180,38 @@ void Inventory::addItemStackNoCheck(ItemStack itemStack)
 {
 	// @todo implement this function
 
+	// Create a new Node
+    // Note what actually occurs on the next line
+    Node *new_node = nullptr;
+
+    // Store the "itemStack" data within the node
+    new_node = new Node(itemStack);
+
+    // This node exists for memory leak demos
+    // Node* leak_node = new Node(itemStack);
+
+    // Handle the case where the first node is added
+    if (this->occupied == 0) 
+	{
+        // this->head = this->tail = new_node;
+        // Note the above line is it any different
+        // from the next two lines?
+        this->head = new_node;
+        this->tail = new_node;
+    }
+    else 
+	{
+        // Add the new node to the this
+        // What happens on the following two lines
+        (this->tail)->next = new_node;
+        this->tail = new_node;
+    }
+
+    // Increase the number of nodes
+    this->occupied++;
+
+    // Do not allow access to the node except
+    // through the linked list
+    // Is this line necessary?
+    new_node = nullptr;
 }
